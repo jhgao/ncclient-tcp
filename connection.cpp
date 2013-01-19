@@ -6,6 +6,8 @@ Connection::Connection(QObject *parent) :
 {
     connect(this, SIGNAL(readyRead()),
             this, SLOT(onControlSktReadyRead()));
+    connect(this, SIGNAL(connected()),
+            this, SLOT(onConnected()));
 
     //init data handler
     i_dh = new DHtcp(this);
@@ -88,6 +90,16 @@ void Connection::writeOutCMD(const eControl_CMD cmd, const QByteArray arg)
 
     Packet p(cmd,arg);
     this->write(p.genPacket());
+}
+
+void Connection::onConnected()
+{
+    QByteArray arg;
+    QDataStream out( &arg, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)i_dh->type();
+    out << i_dh->declareArg();
+    this->writeOutCMD(DATALINK_DECLARE, arg);
 }
 
 QString Connection::psCmdDbg(QString cmd, QString arg)

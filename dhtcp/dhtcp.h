@@ -11,10 +11,12 @@ class DHtcp : public DataHandler
     Q_OBJECT
 public:
     explicit DHtcp(QObject *parent = 0);
-    QByteArray getInitAckArg();
+    eProtocTypes type() const;
+     QByteArray declareArg();
 signals:
     
 public slots:
+    void startFetch();
 private:
     QTcpSocket m_tcpDataSkt;
 };

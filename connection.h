@@ -28,6 +28,7 @@ private slots:
 
     void writeOutCMD(const eControl_CMD cmd,
                      const QByteArray arg = QByteArray());
+    void onConnected();
 
 private:
     QString psCmdDbg(QString cmd, QString arg = QString());

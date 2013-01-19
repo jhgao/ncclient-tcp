@@ -10,6 +10,10 @@ class DataHandler : public QObject
     Q_OBJECT
 public:
     explicit DataHandler(QObject *parent = 0);
+
+    virtual eProtocTypes type() const = 0;
+    /* used when connect to Server */
+    virtual QByteArray declareArg() = 0;
 signals:
     void sig_writeOutCmd(eControl_CMD,QByteArray);
 
@@ -17,6 +21,8 @@ signals:
     void sig_gotBlockSN(quint32 sn);
     
 public slots:
+    /* called when server is ready with chooesed protocol */
+    virtual void startFetch() = 0;
 protected:
     /* signal parent object to write out CMD */
     void sigWriteOutCmd(const eControl_CMD, const QByteArray);
