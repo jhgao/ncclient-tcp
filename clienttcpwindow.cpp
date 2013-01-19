@@ -9,11 +9,29 @@ ClientTcpWindow::ClientTcpWindow(QWidget *parent) :
 
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(100);
-    //TODO connect progress signal
 
     ui->graphicsView->setScene(&m_scene);
     connect(ui->graphicsView, SIGNAL(sig_resized(QSize)),
             &m_scene, SLOT(arragneToView(QSize)));
+    //find a local ip
+    QList<QHostAddress> ipAddressesList;
+    QString ipAddress;
+
+    ipAddressesList = QNetworkInterface::allAddresses();
+    // use the first non-localhost IPv4 address
+    for (int i = 0; i < ipAddressesList.size(); ++i) {
+        if (ipAddressesList.at(i) != QHostAddress::LocalHost &&
+                ipAddressesList.at(i).toIPv4Address()) {
+            ipAddress = ipAddressesList.at(i).toString();
+            break;
+        }
+    }
+    // if we did not find one, use IPv4 localhost
+    if (ipAddress.isEmpty())
+        ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
+
+    ui->lineEdit_serverAddr->setText(ipAddress);
+    ui->lineEdit_serverPort->setText(QString::number(SERVER_DEFAULT_PORT));
 
     //connection
     connect(&m_con, SIGNAL(sig_progressPercent(uint)),

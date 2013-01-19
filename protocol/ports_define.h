@@ -7,4 +7,6 @@
 #define TCP_CONTROL_PORT    27015  //TCP port for Control
 #define TCP_DATA_PORT   27016
 
+#define SERVER_DEFAULT_PORT 27015
+
 #endif // PORTS_DEFINE_H

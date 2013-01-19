@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "gui/rcvprogressscene.h"
 #include "connection.h"
+#include "protocol/ports_define.h"
 
 namespace Ui {
 class ClientTcpWindow;
