@@ -26,13 +26,13 @@ private slots:
     void onControlSktReadyRead();
     void processCMD(const Packet& p);
 
-    void writeOutCMD(const eControl_CMD cmd,
+    void writeOutCMD(eControl_CMD cmd,
                      const QByteArray arg = QByteArray());
     void onConnected();
 
 private:
     QString psCmdDbg(QString cmd, QString arg = QString());
-    void processProtocolAck(const eProtocTypes type, const QByteArray protocArg);
+    void processProtocolAck(eProtocTypes type, const QByteArray protocArg);
     quint16 packetSize; //for reading packet
     int i_cmd_counter;
 

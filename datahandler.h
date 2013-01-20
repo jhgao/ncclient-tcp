@@ -25,7 +25,7 @@ public slots:
     virtual void startFetch() = 0;
 protected:
     /* signal parent object to write out CMD */
-    void sigWriteOutCmd(const eControl_CMD, const QByteArray);
+    void sigWriteOutCmd(eControl_CMD, const QByteArray);
 };
 
 #endif // DATAHANDLER_H

@@ -3,8 +3,12 @@
 
 #include <QDataStream>
 #include <QTcpSocket>
+#include <QTcpServer>
+#include <QNetworkInterface>
 #include "datahandler.h"
 #include "protocol/cmd_define.h"
+
+#include "dhtcpcmd.h"
 
 namespace DHtcp{
 class DHtcp : public DataHandler
@@ -13,13 +17,22 @@ class DHtcp : public DataHandler
 public:
     explicit DHtcp(QObject *parent = 0);
     eProtocTypes type() const;
-     QByteArray declareArg();
+    QByteArray declareArg();
 signals:
+    void sig_dataConnected();
     
 public slots:
     void startFetch();
+
+private slots:
+    void onIncomingDataConnection();
 private:
-    QTcpSocket m_tcpDataSkt;
+    bool isReadyToFetch();
+    void writeOutCmd(eCMD, const QByteArray&);
+
+    QString i_ipAddress;    //local ip
+    QTcpSocket* i_tcpDataSkt;
+    QTcpServer i_dataServer;
 };
 }
 

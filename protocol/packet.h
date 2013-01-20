@@ -14,7 +14,7 @@
 class Packet
 {
 public:
-    explicit Packet(const eControl_CMD cmd,
+    explicit Packet(eControl_CMD cmd,
                     const QByteArray arg = QByteArray()); //cmd packet
 
     explicit Packet(const QByteArray &data); //data packet

@@ -1,6 +1,6 @@
 #include "packet.h"
 
-Packet::Packet(const eControl_CMD cmd,const QByteArray arg):
+Packet::Packet(eControl_CMD cmd,const QByteArray arg):
     i_type(PTYPE_CMD),i_cmd(cmd),i_cmd_arg(arg)
 {
 }

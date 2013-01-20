@@ -74,7 +74,7 @@ void Connection::processCMD(const Packet &p)
 
     switch(p.getCMD()){
     case DATALINK_DECLARE_ACK:
-        psCmdDbg("DATALINK_DECLARE_ACK",p.getCMDarg().toHex());
+        psCmdDbg("DATALINK_DECLARE_ACK");
         args >> i_ackProtoc;
         args >> i_ackProtocArg;
         this->processProtocolAck((eProtocTypes)i_ackProtoc,i_ackProtocArg);
@@ -84,7 +84,7 @@ void Connection::processCMD(const Packet &p)
     }
 }
 
-void Connection::writeOutCMD(const eControl_CMD cmd, const QByteArray arg)
+void Connection::writeOutCMD(eControl_CMD cmd, const QByteArray arg)
 {
     if(!this->isWritable()) return;
 
@@ -115,11 +115,20 @@ QString Connection::psCmdDbg(QString cmd, QString arg)
     return dbg;
 }
 
-void Connection::processProtocolAck(const eProtocTypes type, const QByteArray protocArg)
+void Connection::processProtocolAck(eProtocTypes type, const QByteArray protocArg)
 {
     if( PROTOC_TCP == type ){
         //TODO judge protocArg
-        qDebug() << "TODO: server ack ready, TCP protocol";
-        i_dh->startFetch();
+        QString serverDataSktAddr;
+        quint16 serverDataSktPort;
+
+        QDataStream in(protocArg);
+        in.setVersion(QDataStream::Qt_4_0);
+        in >> serverDataSktAddr;
+        in >> serverDataSktPort;
+
+        qDebug() << "server ack: TCP protocol, server skt"
+                 << serverDataSktAddr
+                 << " : " << serverDataSktPort;
     }
 }

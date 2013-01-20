@@ -1,9 +1,18 @@
 #ifndef DHTCPPROTOCOL_H
 #define DHTCPPROTOCOL_H
+/* [simple tcp file transfer]
+ * client listen at data tcp port,
+ * then issue link to server,
+ * server link back to client,
+ * transfer data.
+ */
 namespace DHtcp{
-enum eDHtcpCMD{
 
+enum eCMD{
+    CMD_START,
+    CMD_STOP
 };
+
 }
 
 #endif // DHTCPPROTOCOL_H
