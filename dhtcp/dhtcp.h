@@ -6,6 +6,7 @@
 #include "datahandler.h"
 #include "protocol/cmd_define.h"
 
+namespace DHtcp{
 class DHtcp : public DataHandler
 {
     Q_OBJECT
@@ -20,5 +21,6 @@ public slots:
 private:
     QTcpSocket m_tcpDataSkt;
 };
+}
 
 #endif // DHTCP_H

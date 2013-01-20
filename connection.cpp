@@ -10,7 +10,7 @@ Connection::Connection(QObject *parent) :
             this, SLOT(onConnected()));
 
     //init data handler
-    i_dh = new DHtcp(this);
+    i_dh = new DHtcp::DHtcp(this);
     connect(i_dh, SIGNAL(sig_progressPercent(uint)),
             this, SIGNAL(sig_progressPercent(uint)));
     connect(i_dh, SIGNAL(sig_gotBlockSN(quint32)),
@@ -120,5 +120,6 @@ void Connection::processProtocolAck(const eProtocTypes type, const QByteArray pr
     if( PROTOC_TCP == type ){
         //TODO judge protocArg
         qDebug() << "TODO: server ack ready, TCP protocol";
+        i_dh->startFetch();
     }
 }
