@@ -50,6 +50,7 @@ void DHtcp::startFetch()
 {
     if( this->isReadyToFetch() ){
         qDebug() << "DHtcp::startFetch()";
+        writeOutCmd(CMD_START);
     }
 }
 
@@ -57,7 +58,7 @@ void DHtcp::onIncomingDataConnection()
 {
     if( i_dataServer.hasPendingConnections()){
         i_tcpDataSkt = i_dataServer.nextPendingConnection();
-        i_dataServer.close();
+//        i_dataServer.close();
         qDebug() << "DHtcp::onIncomingDataConnection() stop listening";
         emit sig_dataConnected();
     }
@@ -70,10 +71,15 @@ bool DHtcp::isReadyToFetch()
         qDebug() << "\t data skt ready";
         return true;
     }
+    return false;
 }
 
-void DHtcp::writeOutCmd(eCMD, const QByteArray &)
+void DHtcp::writeOutCmd(eCMD cmd, const QByteArray &arg)
 {
+    if(!i_tcpDataSkt) return;
+
+    Packet p(cmd,arg);
+    i_tcpDataSkt->write(p.genPacket());
 }
 
 }

@@ -47,9 +47,4 @@ enum eControl_CMD {
     CON_FILE_SIZE_ACK  //old[server] current sending file size
 };
 
-enum ePacketType{
-    PTYPE_DATA,
-    PTYPE_CMD
-};
-
 #endif // CMD_DEFINE_H

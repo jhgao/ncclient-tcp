@@ -105,7 +105,7 @@ void Connection::onConnected()
 QString Connection::psCmdDbg(QString cmd, QString arg)
 {
     QString dbg;
-    dbg = " cmd " + QString::number(i_cmd_counter);
+    dbg = "Client Connection got CMD " + QString::number(i_cmd_counter);
     dbg += " [" + cmd + "] ";
     dbg += arg;
     dbg += "\tfrom " + this->peerAddress().toString()

@@ -7,8 +7,9 @@
 #include <QNetworkInterface>
 #include "datahandler.h"
 #include "protocol/cmd_define.h"
+#include "protocol/packet.h"
 
-#include "dhtcpcmd.h"
+#include "dhtcpprotocol.h"
 
 namespace DHtcp{
 class DHtcp : public DataHandler
@@ -28,7 +29,7 @@ private slots:
     void onIncomingDataConnection();
 private:
     bool isReadyToFetch();
-    void writeOutCmd(eCMD, const QByteArray&);
+    void writeOutCmd(eCMD, const QByteArray& = QByteArray());
 
     QString i_ipAddress;    //local ip
     QTcpSocket* i_tcpDataSkt;
