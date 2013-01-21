@@ -11,6 +11,8 @@
 
 #include "dhtcpprotocol.h"
 
+#define WAIT_RCV_BLOCK_TIMEOUT 5000
+
 namespace DHtcp{
 class DHtcp : public DataHandler
 {
@@ -27,13 +29,18 @@ public slots:
 
 private slots:
     void onIncomingDataConnection();
+    void onDataSktReadyRead();
 private:
     bool isReadyToFetch();
     void writeOutCmd(eCMD, const QByteArray& = QByteArray());
+    void processCMD(const Packet& p);
+    QString psCmdDbg(QString cmd, QString arg = QString());
+    void processData(const Packet& p);
 
     QString i_ipAddress;    //local ip
     QTcpSocket* i_tcpDataSkt;
     QTcpServer i_dataServer;
+    int i_cmd_counter;
 };
 }
 

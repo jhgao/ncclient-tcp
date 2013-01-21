@@ -20,8 +20,11 @@ signals:
     void sig_ConnectionFinished(Connection*);
     void sig_progressPercent(uint);
     void sig_gotBlockSN(quint32 sn);
-    
+
 public slots:
+    void slot_abort();
+    void slot_connectToHost(QString, quint16);
+
 private slots:
     void onControlSktReadyRead();
     void processCMD(const Packet& p);

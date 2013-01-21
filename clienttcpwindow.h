@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "gui/rcvprogressscene.h"
 #include "connection.h"
+#include "connectionthread.h"
 #include "protocol/ports_define.h"
 
 namespace Ui {
@@ -17,6 +18,11 @@ class ClientTcpWindow : public QMainWindow
 public:
     explicit ClientTcpWindow(QWidget *parent = 0);
     ~ClientTcpWindow();
+signals:
+    void sig_conConAbortCmd();
+    void sig_onConConnectToHostCmd(QString,quint16);
+    void sig_test();
+
 private slots:
     void updateProgress(const unsigned int);  // percent
     void onGotBlock(const quint32 bsn); //got block i
@@ -30,7 +36,8 @@ private:
     Ui::ClientTcpWindow *ui;
     RcvProgressScene m_scene;
     bool m_isConnected;
-    Connection m_con;
+    Connection* m_con;
+    ConnectionThread* m_conThread;
 };
 
 #endif // CLIENTTCPWINDOW_H

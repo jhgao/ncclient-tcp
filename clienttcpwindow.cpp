@@ -2,7 +2,7 @@
 #include "ui_clienttcpwindow.h"
 
 ClientTcpWindow::ClientTcpWindow(QWidget *parent) :
-    QMainWindow(parent),
+    QMainWindow(parent),m_con(0),m_conThread(0),
     ui(new Ui::ClientTcpWindow),m_isConnected(false)
 {
     ui->setupUi(this);
@@ -33,15 +33,27 @@ ClientTcpWindow::ClientTcpWindow(QWidget *parent) :
     ui->lineEdit_serverAddr->setText(ipAddress);
     ui->lineEdit_serverPort->setText(QString::number(SERVER_DEFAULT_PORT));
 
+    qDebug() << "GUI thread " << this->thread();
     //connection
-    connect(&m_con, SIGNAL(sig_progressPercent(uint)),
+    if(!m_con)  m_con = new Connection();
+    connect(m_con, SIGNAL(sig_progressPercent(uint)),
             this, SLOT(updateProgress(uint)));
-    connect(&m_con, SIGNAL(sig_gotBlockSN(quint32)),
+    connect(m_con, SIGNAL(sig_gotBlockSN(quint32)),
             this, SLOT(onGotBlock(quint32)));
-    connect(&m_con, SIGNAL(connected()),
+    connect(m_con, SIGNAL(connected()),
             this, SLOT(onConnected()));
-    connect(&m_con, SIGNAL(disconnected()),
+    connect(m_con, SIGNAL(disconnected()),
             this, SLOT(onDisconnected()));
+
+    connect(this, SIGNAL(sig_conConAbortCmd()),
+            m_con, SLOT(slot_abort()));
+    connect(this, SIGNAL(sig_onConConnectToHostCmd(QString,quint16)),
+            m_con, SLOT(slot_connectToHost(QString,quint16)));
+
+    //handle connection in another thread
+    if( !m_conThread)   m_conThread = new ConnectionThread(this);
+    m_con->moveToThread(m_conThread);
+    m_conThread->start();
 }
 
 ClientTcpWindow::~ClientTcpWindow()
@@ -76,9 +88,10 @@ void ClientTcpWindow::onDisconnected()
 void ClientTcpWindow::on_pushButton_linkServer_clicked()
 {
     if(m_isConnected){
-        m_con.abort();
+        emit sig_conConAbortCmd();
     }else{
-        m_con.connectToHost(QHostAddress(ui->lineEdit_serverAddr->text()),
-                            (quint16)ui->lineEdit_serverPort->text().toInt());
+        emit sig_onConConnectToHostCmd(
+                    ui->lineEdit_serverAddr->text(),
+                    (quint16)ui->lineEdit_serverPort->text().toInt());
     }
 }

@@ -56,11 +56,10 @@ void Connection::onControlSktReadyRead()
             processCMD(p);
             break;
         case PTYPE_DATA:
-//            processData(p);
-            qDebug() << "\t Data from CMD link";
+            qDebug() << "\t Connection: Data from CMD link";
             break;
         default:
-            qDebug() << "\t unknown packet type";
+            qDebug() << "\t Connection: Unknown packet type";
         }
     }
 }
@@ -132,3 +131,16 @@ void Connection::processProtocolAck(eProtocTypes type, const QByteArray protocAr
                  << " : " << serverDataSktPort;
     }
 }
+
+
+void Connection::slot_abort()
+{
+    this->abort();
+}
+
+void Connection::slot_connectToHost(QString addr, quint16 port)
+{
+    qDebug() << "Connection::slot_connectToHost()";
+    this->connectToHost(QHostAddress(addr), port);
+}
+
