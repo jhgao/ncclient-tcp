@@ -48,7 +48,7 @@ bool Packet::fromPacket(QByteArray a)
 {
     i_packet = a;
     quint16 blockSize;
-    QDataStream in(&i_packet,QIODevice::ReadOnly);
+    QDataStream in(i_packet);
     in.setVersion(QDataStream::Qt_4_8);
     in >> blockSize;
 
@@ -63,7 +63,7 @@ bool Packet::fromPacket(QByteArray a)
 bool Packet::fromPayload(QByteArray a)
 {
     i_payload = a;
-    QDataStream in(&i_payload,QIODevice::ReadOnly);
+    QDataStream in(i_payload);
     in.setVersion(QDataStream::Qt_4_8);
     in >> i_type;
 
@@ -99,4 +99,26 @@ QByteArray Packet::getCMDarg()const
 QByteArray Packet::getData() const
 {
     return i_data;
+}
+
+QString Packet::dbgString() const
+{
+    QString s("Packet:");
+    switch(i_type){
+    case PTYPE_CMD:
+        s+="CMD";
+        s+=" ["+ QString::number(i_cmd) + "]";
+        s+=" arg";
+        s+= i_cmd_arg.toHex();
+        s+=" i_data size" + QString::number(i_data.size());
+        s+=" i_payload size" + QString::number(i_payload.size());
+        s+=" i_packet size" + QString::number(i_packet.size());
+        break;
+    case PTYPE_DATA: s+="DATA";
+        s+=" i_data size" + QString::number(i_data.size());
+        s+=" i_payload size" + QString::number(i_payload.size());
+        s+=" i_packet size" + QString::number(i_packet.size());
+        break;
+    }
+    return s;
 }

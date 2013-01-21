@@ -135,6 +135,7 @@ void Connection::processProtocolAck(eProtocTypes type, const QByteArray protocAr
 
 void Connection::slot_abort()
 {
+    i_dh->abortWorks();
     this->abort();
 }
 

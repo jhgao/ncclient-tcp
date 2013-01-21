@@ -55,6 +55,11 @@ void DHtcp::startFetch()
     }
 }
 
+void DHtcp::abortWorks()
+{
+    i_tcpDataSkt->abort();
+}
+
 void DHtcp::onIncomingDataConnection()
 {
     if( i_dataServer->hasPendingConnections()){
@@ -65,6 +70,8 @@ void DHtcp::onIncomingDataConnection()
         //TODO check incoming identity
         connect(i_tcpDataSkt, SIGNAL(readyRead()),
                 this, SLOT(onDataSktReadyRead()));
+        connect(i_tcpDataSkt, SIGNAL(disconnected()),
+                this, SLOT(onDataSktDisconnected()));
     }
 }
 
@@ -77,10 +84,10 @@ void DHtcp::onDataSktReadyRead()
     in.setVersion(QDataStream::Qt_4_8);
     if (packetSize == 0) {
         if (i_tcpDataSkt->bytesAvailable() < (int)sizeof(quint16)){
-            qDebug() << "\t E: packet size wrong"
-                     << i_tcpDataSkt->bytesAvailable()
-                     << "/"
-                     << (int)sizeof(quint16);;
+//            qDebug() << "\t E: packet size wrong"
+//                     << i_tcpDataSkt->bytesAvailable()
+//                     << "/"
+//                     << (int)sizeof(quint16);;
             return;
         }
         in >> packetSize;
@@ -88,9 +95,9 @@ void DHtcp::onDataSktReadyRead()
 
     //ensure data size available
     if (i_tcpDataSkt->bytesAvailable() < packetSize){
-        qDebug() << "\t E: not enough data bytes"
-                 << i_tcpDataSkt->bytesAvailable()
-                 << "/need " << packetSize;
+//        qDebug() << "\t E: not enough data bytes"
+//                 << i_tcpDataSkt->bytesAvailable()
+//                 << "/need " << packetSize;
         return;
     }
 
@@ -106,13 +113,17 @@ void DHtcp::onDataSktReadyRead()
             processCMD(p);
             break;
         case PTYPE_DATA:
-            qDebug() << payloadArrey.size();
             processData(p);
             break;
         default:
             qDebug() << "\t unknown packet type";
         }
     }
+}
+
+void DHtcp::onDataSktDisconnected()
+{
+    i_cmd_counter = 0;
 }
 
 bool DHtcp::isReadyToFetch()
@@ -145,7 +156,7 @@ void DHtcp::processCMD(const Packet &p)
         psCmdDbg("CMD_STOP");
         break;
     default:
-        psCmdDbg("? UNKNOWN ?");
+        psCmdDbg(QString::number(p.getCMD()) + "?UNKNOWN" );
     }
 }
 

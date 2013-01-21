@@ -23,6 +23,7 @@ signals:
 public slots:
     /* called when server is ready with chooesed protocol */
     virtual void startFetch() = 0;
+    virtual void abortWorks() = 0;
 protected:
     /* signal parent object to write out CMD */
     void sigWriteOutCmd(eControl_CMD, const QByteArray);

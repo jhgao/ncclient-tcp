@@ -35,6 +35,7 @@ public:
     QByteArray getCMDarg() const;
     QByteArray getData()const;
 
+    QString dbgString()const;
 private:
     quint16 i_type;
 

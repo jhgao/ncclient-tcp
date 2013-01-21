@@ -26,10 +26,12 @@ signals:
     
 public slots:
     void startFetch();
+    void abortWorks();
 
 private slots:
     void onIncomingDataConnection();
     void onDataSktReadyRead();
+    void onDataSktDisconnected();
 private:
     bool isReadyToFetch();
     void writeOutCmd(eCMD, const QByteArray& = QByteArray());
