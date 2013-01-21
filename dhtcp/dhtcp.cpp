@@ -1,9 +1,10 @@
 #include "dhtcp.h"
 namespace DHtcp{
 DHtcp::DHtcp(QObject *parent) :
-    DataHandler(parent),i_tcpDataSkt(0)
+    DataHandler(parent),i_tcpDataSkt(0),i_dataServer(0)
 {
-    if (!i_dataServer.listen(QHostAddress::Any,0)) {
+    i_dataServer = new QTcpServer(this);
+    if (!i_dataServer->listen(QHostAddress::Any,0)) {
         qDebug() << "DHtcp listen data port failed";
         exit(-1);
     }
@@ -22,9 +23,9 @@ DHtcp::DHtcp(QObject *parent) :
         i_ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
 
     qDebug() << "\n DHtcp is listening data at" << i_ipAddress
-             << ":" << i_dataServer.serverPort();
+             << ":" << i_dataServer->serverPort();
 
-    connect(&i_dataServer, SIGNAL(newConnection()),
+    connect(i_dataServer, SIGNAL(newConnection()),
             this, SLOT(onIncomingDataConnection()));
 
     //this logic
@@ -42,7 +43,7 @@ QByteArray DHtcp::declareArg()  //local data port listening
     QDataStream out(&arg, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
     out << i_ipAddress;
-    out << (quint16) i_dataServer.serverPort();
+    out << (quint16) i_dataServer->serverPort();
     return arg;
 }
 
@@ -56,9 +57,9 @@ void DHtcp::startFetch()
 
 void DHtcp::onIncomingDataConnection()
 {
-    if( i_dataServer.hasPendingConnections()){
-        i_tcpDataSkt = i_dataServer.nextPendingConnection();
-//        i_dataServer.close();
+    if( i_dataServer->hasPendingConnections()){
+        i_tcpDataSkt = i_dataServer->nextPendingConnection();
+//        i_dataServer->close();
         qDebug() << "DHtcp::onIncomingDataConnection()";
         emit sig_dataConnected();
         //TODO check incoming identity

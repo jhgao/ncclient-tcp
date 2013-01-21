@@ -39,7 +39,7 @@ private:
 
     QString i_ipAddress;    //local ip
     QTcpSocket* i_tcpDataSkt;
-    QTcpServer i_dataServer;
+    QTcpServer* i_dataServer;
     int i_cmd_counter;
 };
 }

@@ -7,6 +7,5 @@ ConnectionThread::ConnectionThread(QObject *parent) :
 
 void ConnectionThread::run()
 {
-    qDebug() << "ConnectionThread::run()" << this->thread();
     exec();
 }
