@@ -23,7 +23,7 @@ void Connection::onControlSktReadyRead()
 
     //get packet size
     QDataStream in(this);
-    in.setVersion(QDataStream::Qt_4_0);
+    in.setVersion(QDataStream::Qt_4_8);
     if (packetSize == 0) {
         if (this->bytesAvailable() < (int)sizeof(quint16)){
             qDebug() << "\t E: packet size wrong"
@@ -69,7 +69,7 @@ void Connection::processCMD(const Packet &p)
     i_cmd_counter++;
 
     QDataStream args(p.getCMDarg());
-    args.setVersion(QDataStream::Qt_4_0);
+    args.setVersion(QDataStream::Qt_4_8);
 
     switch(p.getCMD()){
     case DATALINK_DECLARE_ACK:
@@ -95,7 +95,7 @@ void Connection::onConnected()
 {
     QByteArray arg;
     QDataStream out( &arg, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
+    out.setVersion(QDataStream::Qt_4_8);
     out << (quint16)i_dh->type();
     out << i_dh->declareArg();
     this->writeOutCMD(DATALINK_DECLARE, arg);
@@ -122,7 +122,7 @@ void Connection::processProtocolAck(eProtocTypes type, const QByteArray protocAr
         quint16 serverDataSktPort;
 
         QDataStream in(protocArg);
-        in.setVersion(QDataStream::Qt_4_0);
+        in.setVersion(QDataStream::Qt_4_8);
         in >> serverDataSktAddr;
         in >> serverDataSktPort;
 

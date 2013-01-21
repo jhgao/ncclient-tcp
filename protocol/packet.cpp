@@ -18,7 +18,7 @@ const QByteArray &Packet::genPacket()
 {
     i_payload.clear();
     QDataStream payloads(&i_payload, QIODevice::WriteOnly);
-    payloads.setVersion(QDataStream::Qt_4_0);
+    payloads.setVersion(QDataStream::Qt_4_8);
     switch(i_type){
     case PTYPE_CMD:
         payloads << (quint16)PTYPE_CMD;  //data: packate type
@@ -35,7 +35,7 @@ const QByteArray &Packet::genPacket()
 
     i_packet.clear();
     QDataStream out(&i_packet, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
+    out.setVersion(QDataStream::Qt_4_8);
     out << (quint16)0;  //preserve for packet size
     out << i_payload;
     out.device()->seek(0);
@@ -49,7 +49,7 @@ bool Packet::fromPacket(QByteArray a)
     i_packet = a;
     quint16 blockSize;
     QDataStream in(&i_packet,QIODevice::ReadOnly);
-    in.setVersion(QDataStream::Qt_4_0);
+    in.setVersion(QDataStream::Qt_4_8);
     in >> blockSize;
 
     if( (quint16)a.size()-sizeof(quint16) < blockSize)
@@ -64,7 +64,7 @@ bool Packet::fromPayload(QByteArray a)
 {
     i_payload = a;
     QDataStream in(&i_payload,QIODevice::ReadOnly);
-    in.setVersion(QDataStream::Qt_4_0);
+    in.setVersion(QDataStream::Qt_4_8);
     in >> i_type;
 
     switch(i_type){

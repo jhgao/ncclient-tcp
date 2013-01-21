@@ -41,7 +41,7 @@ QByteArray DHtcp::declareArg()  //local data port listening
 {
     QByteArray arg;
     QDataStream out(&arg, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
+    out.setVersion(QDataStream::Qt_4_8);
     out << i_ipAddress;
     out << (quint16) i_dataServer->serverPort();
     return arg;
@@ -74,7 +74,7 @@ void DHtcp::onDataSktReadyRead()
 
     //get packet size
     QDataStream in(i_tcpDataSkt);
-    in.setVersion(QDataStream::Qt_4_0);
+    in.setVersion(QDataStream::Qt_4_8);
     if (packetSize == 0) {
         if (i_tcpDataSkt->bytesAvailable() < (int)sizeof(quint16)){
             qDebug() << "\t E: packet size wrong"
