@@ -80,45 +80,24 @@ void DHtcp::onIncomingDataConnection()
 
 void DHtcp::onDataSktReadyRead()
 {
-    //get packet size
-    QDataStream in(i_tcpDataSkt);
-    in.setVersion(QDataStream::Qt_4_8);
-    if (i_packetSize == 0) {
-        if (i_tcpDataSkt->bytesAvailable() < (int)sizeof(quint16)){
-            return;
-        }
-        in >> i_packetSize;
+    QFile rcvFile(i_decoder->getRcvCacheFileName());
+
+    if(!rcvFile.open(QIODevice::WriteOnly | QIODevice::Append)){
+        qDebug() << "DHtcpDecoder: failed open cache file";
     }
 
-    //ensure data size available
-    if (i_tcpDataSkt->bytesAvailable() < i_packetSize){
-        return;
+    while (i_tcpDataSkt->bytesAvailable() > 0){
+        QByteArray a = i_tcpDataSkt->read(
+                    i_tcpDataSkt->bytesAvailable());
+        rcvFile.write(a);
     }
 
-    //read in data
-    QByteArray payloadArrey;
-    in >> payloadArrey;
-
-    //analyze payload
-    Packet p;
-    if( p.fromPayload(payloadArrey)){
-        switch(p.getType()){
-        case PTYPE_CMD:
-            processCMD(p);
-            break;
-        case PTYPE_DATA:
-            processData(p);
-            break;
-        default:
-            qDebug() << "\t unknown packet type";
-        }
-    }
-
-    i_packetSize = 0;
+    rcvFile.close();
 }
 
 void DHtcp::onDataSktDisconnected()
 {
+    qDebug() << "DHtcp::onDataSktDisconnected()";
     i_cmd_counter = 0;
 }
 

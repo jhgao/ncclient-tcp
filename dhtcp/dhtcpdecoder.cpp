@@ -30,6 +30,11 @@ bool DHtcpDecoder::queueFileBlock(const QByteArray &a)
     return true;
 }
 
+QString DHtcpDecoder::getRcvCacheFileName() const
+{
+    return i_rcvCacheFileInfo.absoluteFilePath();
+}
+
 bool DHtcpDecoder::touch(QString aFilePath)
 {
     if( QFile::exists(aFilePath)) return true;

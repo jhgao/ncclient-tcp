@@ -20,7 +20,7 @@ class DHtcpDecoder : public QObject
 public:
     explicit DHtcpDecoder(QObject *parent = 0);
     bool queueFileBlock(const QByteArray &);
-
+    QString getRcvCacheFileName()const;
 signals:
     void sig_savedAllBytes();
     void sig_blockCorruptOffset(quint64);
