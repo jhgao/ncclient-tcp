@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>276</width>
+    <width>270</width>
     <height>289</height>
    </rect>
   </property>
@@ -52,9 +52,6 @@
       </layout>
      </widget>
     </item>
-    <item row="2" column="0">
-     <widget class="RcvProgressView" name="graphicsView"/>
-    </item>
     <item row="3" column="0">
      <widget class="QProgressBar" name="progressBar">
       <property name="value">
@@ -69,6 +66,13 @@
       </property>
      </widget>
     </item>
+    <item row="2" column="0">
+     <widget class="RcvProgressView" name="graphicsView">
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -76,7 +80,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>276</width>
+     <width>270</width>
      <height>23</height>
     </rect>
    </property>

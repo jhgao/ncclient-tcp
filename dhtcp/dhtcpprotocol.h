@@ -13,7 +13,8 @@ enum eCMD{
     CMD_STOP,
 
     //tcp file sendig
-    FILE_SENT
+    FILE_SENT_BLOCKING,  //request to start send file
+    FILE_SENT_BLOCKING_GOAHEAD   //ok to send file
 };
 
 }

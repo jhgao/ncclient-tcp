@@ -13,6 +13,7 @@
 #include "dhtcpdecoder.h"
 
 #define WAIT_RCV_BLOCK_TIMEOUT 5000    //15s
+#define DISPLAY_BLOCK_SIZE (100*1000)   //100K
 
 namespace DHtcp{
 class DHtcp : public DataHandler
@@ -24,7 +25,7 @@ public:
     QByteArray declareArg();
 signals:
     void sig_dataConnected();
-    
+
 public slots:
     void startFetch();
     void abortWorks();
@@ -33,6 +34,7 @@ private slots:
     void onIncomingDataConnection();
     void onDataSktReadyRead();
     void onDataSktDisconnected();
+    void blockRcvFile();
 private:
     bool isReadyToFetch();
     void writeOutCmd(eCMD, const QByteArray& = QByteArray());
@@ -47,6 +49,9 @@ private:
 
     quint16 i_packetSize;   //used when nonblocking rcv
     DHtcpDecoder *i_decoder;
+
+    qint64 i_rcvFileSize;
+    qint64 i_savedBytes;
 };
 }
 

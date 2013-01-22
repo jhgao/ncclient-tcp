@@ -2,7 +2,8 @@
 namespace DHtcp{
 DHtcp::DHtcp(QObject *parent) :
     DataHandler(parent),i_tcpDataSkt(0),i_dataServer(0),
-    i_cmd_counter(0),i_decoder(0)
+    i_cmd_counter(0),i_decoder(0),i_rcvFileSize(0),i_packetSize(0),
+    i_savedBytes(0)
 {
     i_decoder = new DHtcpDecoder(this);
 
@@ -80,25 +81,48 @@ void DHtcp::onIncomingDataConnection()
 
 void DHtcp::onDataSktReadyRead()
 {
-    QFile rcvFile(i_decoder->getRcvCacheFileName());
+    //get packet size
+        QDataStream in(i_tcpDataSkt);
+        in.setVersion(QDataStream::Qt_4_8);
+        if (i_packetSize == 0) {
+            if (i_tcpDataSkt->bytesAvailable() < (int)sizeof(quint16)){
+                return;
+            }
+            in >> i_packetSize;
+        }
 
-    if(!rcvFile.open(QIODevice::WriteOnly | QIODevice::Append)){
-        qDebug() << "DHtcpDecoder: failed open cache file";
-    }
+        //ensure data size available
+        if (i_tcpDataSkt->bytesAvailable() < i_packetSize){
+            return;
+        }
 
-    while (i_tcpDataSkt->bytesAvailable() > 0){
-        QByteArray a = i_tcpDataSkt->read(
-                    i_tcpDataSkt->bytesAvailable());
-        rcvFile.write(a);
-    }
+        //read in data
+        QByteArray payloadArrey;
+        in >> payloadArrey;
 
-    rcvFile.close();
+        //analyze payload
+        Packet p;
+        if( p.fromPayload(payloadArrey)){
+            switch(p.getType()){
+            case PTYPE_CMD:
+                processCMD(p);
+                break;
+            case PTYPE_DATA:
+                processData(p);
+                break;
+            default:
+                qDebug() << "\t unknown packet type";
+            }
+        }
+
+        i_packetSize = 0;
 }
 
 void DHtcp::onDataSktDisconnected()
 {
     qDebug() << "DHtcp::onDataSktDisconnected()";
     i_cmd_counter = 0;
+//    i_tcpDataSkt->deleteLater();
 }
 
 bool DHtcp::isReadyToFetch()
@@ -124,15 +148,23 @@ void DHtcp::processCMD(const Packet &p)
     ++i_cmd_counter;
 
     switch(p.getCMD()){
-    case CMD_START:
-        psCmdDbg("CMD_START");
-        break;
-    case CMD_STOP:
-        psCmdDbg("CMD_STOP");
-        break;
-    case FILE_SENT:
-        psCmdDbg("FILE_SENT");
-        i_decoder->flushCache();
+    case FILE_SENT_BLOCKING:
+        psCmdDbg("FILE_SENT_BLOCKING");
+        if( p.getCMDarg().size() >0){
+            qint64 fSize;
+            QDataStream in(p.getCMDarg());
+            in.setVersion(QDataStream::Qt_4_8);
+            in >> fSize;
+            if( fSize > 0){
+                i_rcvFileSize = fSize;
+                disconnect(i_tcpDataSkt, SIGNAL(readyRead()),
+                        this, SLOT(onDataSktReadyRead()));
+                connect(i_tcpDataSkt, SIGNAL(readyRead()),
+                           this, SLOT(blockRcvFile()));
+                i_savedBytes = 0;
+                this->writeOutCmd(FILE_SENT_BLOCKING_GOAHEAD);
+            }
+        }
         break;
     default:
         psCmdDbg(QString::number(p.getCMD()) + "?UNKNOWN" );
@@ -155,6 +187,26 @@ QString DHtcp::psCmdDbg(QString cmd, QString arg)
 void DHtcp::processData(const Packet &p)
 {
     i_decoder->queueFileBlock(p.getData());
+}
+
+void DHtcp::blockRcvFile()
+{
+    QFile rcvFile(i_decoder->getRcvCacheFileName());
+
+    if(!rcvFile.open(QIODevice::WriteOnly | QIODevice::Append)){
+        qDebug() << "DHtcpDecoder: failed open cache file";
+    }
+
+    while (i_tcpDataSkt->bytesAvailable() > 0){
+        QByteArray a = i_tcpDataSkt->read(
+                    i_tcpDataSkt->bytesAvailable());
+        i_savedBytes += rcvFile.write(a);
+
+        emit sig_progressPercent( i_savedBytes*100/i_rcvFileSize );
+        emit sig_gotBlockSN( i_savedBytes / DISPLAY_BLOCK_SIZE );
+    }
+
+    rcvFile.close();
 }
 
 }

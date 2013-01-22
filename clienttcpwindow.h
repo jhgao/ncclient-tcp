@@ -21,7 +21,6 @@ public:
 signals:
     void sig_conConAbortCmd();
     void sig_onConConnectToHostCmd(QString,quint16);
-    void sig_test();
 
 private slots:
     void updateProgress(const unsigned int);  // percent

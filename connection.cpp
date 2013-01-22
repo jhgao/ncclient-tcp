@@ -126,7 +126,7 @@ void Connection::processProtocolAck(eProtocTypes type, const QByteArray protocAr
         in >> serverDataSktAddr;
         in >> serverDataSktPort;
 
-        qDebug() << "server ack: TCP protocol, server skt"
+        qDebug() << "Server ACK: TCP protocol, server DATA skt:"
                  << serverDataSktAddr
                  << " : " << serverDataSktPort;
     }
