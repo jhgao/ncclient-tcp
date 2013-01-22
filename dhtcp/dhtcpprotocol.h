@@ -10,7 +10,10 @@ namespace DHtcp{
 
 enum eCMD{
     CMD_START,
-    CMD_STOP
+    CMD_STOP,
+
+    //tcp file sendig
+    FILE_SENT
 };
 
 }

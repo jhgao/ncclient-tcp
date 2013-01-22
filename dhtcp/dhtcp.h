@@ -10,8 +10,9 @@
 #include "protocol/packet.h"
 
 #include "dhtcpprotocol.h"
+#include "dhtcpdecoder.h"
 
-#define WAIT_RCV_BLOCK_TIMEOUT 5000
+#define WAIT_RCV_BLOCK_TIMEOUT 5000    //15s
 
 namespace DHtcp{
 class DHtcp : public DataHandler
@@ -43,6 +44,10 @@ private:
     QTcpSocket* i_tcpDataSkt;
     QTcpServer* i_dataServer;
     int i_cmd_counter;
+    int i_data_counter;
+
+    quint16 i_packetSize;   //used when nonblocking rcv
+    DHtcpDecoder *i_decoder;
 };
 }
 

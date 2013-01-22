@@ -1,8 +1,11 @@
 #include "dhtcp.h"
 namespace DHtcp{
 DHtcp::DHtcp(QObject *parent) :
-    DataHandler(parent),i_tcpDataSkt(0),i_dataServer(0)
+    DataHandler(parent),i_tcpDataSkt(0),i_dataServer(0),
+    i_cmd_counter(0),i_data_counter(0),i_decoder(0)
 {
+    i_decoder = new DHtcpDecoder(this);
+
     i_dataServer = new QTcpServer(this);
     if (!i_dataServer->listen(QHostAddress::Any,0)) {
         qDebug() << "DHtcp listen data port failed";
@@ -77,27 +80,18 @@ void DHtcp::onIncomingDataConnection()
 
 void DHtcp::onDataSktReadyRead()
 {
-    quint16 packetSize = 0;
-
     //get packet size
     QDataStream in(i_tcpDataSkt);
     in.setVersion(QDataStream::Qt_4_8);
-    if (packetSize == 0) {
+    if (i_packetSize == 0) {
         if (i_tcpDataSkt->bytesAvailable() < (int)sizeof(quint16)){
-//            qDebug() << "\t E: packet size wrong"
-//                     << i_tcpDataSkt->bytesAvailable()
-//                     << "/"
-//                     << (int)sizeof(quint16);;
             return;
         }
-        in >> packetSize;
+        in >> i_packetSize;
     }
 
     //ensure data size available
-    if (i_tcpDataSkt->bytesAvailable() < packetSize){
-//        qDebug() << "\t E: not enough data bytes"
-//                 << i_tcpDataSkt->bytesAvailable()
-//                 << "/need " << packetSize;
+    if (i_tcpDataSkt->bytesAvailable() < i_packetSize){
         return;
     }
 
@@ -119,6 +113,8 @@ void DHtcp::onDataSktReadyRead()
             qDebug() << "\t unknown packet type";
         }
     }
+
+    i_packetSize = 0;
 }
 
 void DHtcp::onDataSktDisconnected()
@@ -155,6 +151,11 @@ void DHtcp::processCMD(const Packet &p)
     case CMD_STOP:
         psCmdDbg("CMD_STOP");
         break;
+    case FILE_SENT:
+        psCmdDbg("FILE_SENT");
+        i_data_counter = 0;
+        i_decoder->flushCache();
+        break;
     default:
         psCmdDbg(QString::number(p.getCMD()) + "?UNKNOWN" );
     }
@@ -175,8 +176,7 @@ QString DHtcp::psCmdDbg(QString cmd, QString arg)
 
 void DHtcp::processData(const Packet &p)
 {
-    qDebug() << "DHtcp::processData()"
-             << p.getData().toHex();
+    i_decoder->queueFileBlock(p.getData());
 }
 
 }
