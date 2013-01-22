@@ -20,13 +20,14 @@ class DHtcpDecoder : public QObject
 public:
     explicit DHtcpDecoder(QObject *parent = 0);
     bool queueFileBlock(const QByteArray &);
+
 signals:
     void sig_savedAllBytes();
     void sig_blockCorruptOffset(quint64);
+
 public slots:
     bool flushCache();
-private slots:
-    void onFlushDelayTimerTimeOut();
+
 private:
     bool touch(QString aFilePath);      //creat a certain file
 

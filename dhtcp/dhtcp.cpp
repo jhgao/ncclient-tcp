@@ -2,7 +2,7 @@
 namespace DHtcp{
 DHtcp::DHtcp(QObject *parent) :
     DataHandler(parent),i_tcpDataSkt(0),i_dataServer(0),
-    i_cmd_counter(0),i_data_counter(0),i_decoder(0)
+    i_cmd_counter(0),i_decoder(0)
 {
     i_decoder = new DHtcpDecoder(this);
 
@@ -153,7 +153,6 @@ void DHtcp::processCMD(const Packet &p)
         break;
     case FILE_SENT:
         psCmdDbg("FILE_SENT");
-        i_data_counter = 0;
         i_decoder->flushCache();
         break;
     default:

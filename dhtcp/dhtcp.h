@@ -44,7 +44,6 @@ private:
     QTcpSocket* i_tcpDataSkt;
     QTcpServer* i_dataServer;
     int i_cmd_counter;
-    int i_data_counter;
 
     quint16 i_packetSize;   //used when nonblocking rcv
     DHtcpDecoder *i_decoder;

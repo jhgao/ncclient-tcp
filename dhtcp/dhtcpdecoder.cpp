@@ -8,9 +8,12 @@ DHtcpDecoder::DHtcpDecoder(QObject *parent) :
     i_flushDelayTimer = new QTimer(this);
     i_flushDelayTimer->setSingleShot(true);
     connect(i_flushDelayTimer,SIGNAL(timeout()),
-            this,SLOT(onFlushDelayTimerTimeOut));
+            this,SLOT(flushCache()));
 
     i_rcvCacheFileInfo.setFile(RCV_CACHE_FILE_NAME);
+    if(i_rcvCacheFileInfo.exists())
+        QFile::remove(i_rcvCacheFileInfo.absoluteFilePath());
+
     if(!touch(i_rcvCacheFileInfo.absoluteFilePath())){
         qDebug() << "DHtcpDecoder: failed creat cache file";
     }
@@ -21,6 +24,7 @@ bool DHtcpDecoder::queueFileBlock(const QByteArray &a)
 {
     i_queue.append(a);
     i_cacheSize += a.size();
+
     if( i_cacheSize > CACHE_SIZE ) return flushCache();
     i_flushDelayTimer->start(FLUSH_DELAY);
     return true;
@@ -38,11 +42,14 @@ bool DHtcpDecoder::touch(QString aFilePath)
 
 bool DHtcpDecoder::flushCache()
 {
-    qDebug() << "DHtcpDecoder::flushCache()";
+    qDebug() << "DHtcpDecoder::flushCache()"
+            << "queue size" << i_queue.size();
+
     if(!i_rcvCacheFile.open(QIODevice::WriteOnly | QIODevice::Append)){
         qDebug() << "DHtcpDecoder: failed open cache file";
         return false;
     }
+    qint64 lastOffset = 0;
 
     while(!i_queue.isEmpty()){
         QByteArray a = i_queue.dequeue();
@@ -50,9 +57,11 @@ bool DHtcpDecoder::flushCache()
         RawBlock b;
         b.fromArray(a);
 
+        if( 0 == b.offsetTo) break;
+        if ( b.offsetFrom != b.offsetTo ) lastOffset = b.offsetTo;
+
         i_rcvCacheFile.seek(b.offsetFrom);
         qint64 wroteBytes = i_rcvCacheFile.write(b.data);
-//        i_rcvCacheFile.waitForBytesWritten(FILE_WAIT_BYTES_WRITTEN);
 
         if(wroteBytes == b.data.size()){
             i_savedBytes += wroteBytes;
@@ -67,14 +76,11 @@ bool DHtcpDecoder::flushCache()
         }
     }
 
+    qDebug() << "\t last offset" << lastOffset;
     i_rcvCacheFile.close();
     i_cacheSize = 0;
     return true;
 }
 
-void DHtcpDecoder::onFlushDelayTimerTimeOut()
-{
-    flushCache();
-}
 }
 
