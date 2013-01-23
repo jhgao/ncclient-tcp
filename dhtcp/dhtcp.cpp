@@ -206,6 +206,10 @@ void DHtcp::blockRcvFile()
         emit sig_gotBlockSN( i_savedBytes / DISPLAY_BLOCK_SIZE );
     }
 
+    if(  i_savedBytes == i_rcvFileSize){
+        emit sig_finished();
+    }
+
     rcvFile.close();
 }
 

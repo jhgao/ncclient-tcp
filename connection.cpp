@@ -15,6 +15,8 @@ Connection::Connection(QObject *parent) :
             this, SIGNAL(sig_progressPercent(uint)));
     connect(i_dh, SIGNAL(sig_gotBlockSN(quint32)),
             this, SIGNAL(sig_gotBlockSN(quint32)));
+    connect(i_dh, SIGNAL(sig_finished()),
+            this, SLOT(onDHfinished()));
 }
 
 void Connection::onControlSktReadyRead()
@@ -101,6 +103,23 @@ void Connection::onConnected()
     this->writeOutCMD(DATALINK_DECLARE, arg);
 }
 
+void Connection::onDHfinished()
+{
+//    finishWait();
+}
+
+void Connection::finishWait()
+{
+    this->disconnectFromHost();
+    if( this->state() == QAbstractSocket::UnconnectedState ||
+            this->waitForDisconnected(WAIT_FOR_DISCONNECTED)){
+        this->thread()->exit(0);
+    }else {
+        this->abort();
+        this->thread()->exit(1);
+    }
+}
+
 QString Connection::psCmdDbg(QString cmd, QString arg)
 {
     QString dbg;
@@ -133,10 +152,10 @@ void Connection::processProtocolAck(eProtocTypes type, const QByteArray protocAr
 }
 
 
-void Connection::slot_abort()
+void Connection::slot_abortWorks()
 {
     i_dh->abortWorks();
-    this->abort();
+    finishWait();
 }
 
 void Connection::slot_connectToHost(QString addr, quint16 port)

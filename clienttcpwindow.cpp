@@ -46,18 +46,26 @@ ClientTcpWindow::ClientTcpWindow(QWidget *parent) :
             this, SLOT(onDisconnected()));
 
     connect(this, SIGNAL(sig_onConAbortCmd()),
-            m_con, SLOT(slot_abort()));
+            m_con, SLOT(slot_abortWorks()));
     connect(this, SIGNAL(sig_onConConnectToHostCmd(QString,quint16)),
             m_con, SLOT(slot_connectToHost(QString,quint16)));
 
     //handle connection in another thread
     if( !m_conThread)   m_conThread = new ConnectionThread(this);
+
     m_con->moveToThread(m_conThread);
     m_conThread->start();
 }
 
 ClientTcpWindow::~ClientTcpWindow()
 {
+    if(m_conThread->isRunning()){
+        qDebug() << "abort con";
+        emit sig_onConAbortCmd();
+        if(!m_conThread->wait(WAIT_FOR_ABORT_TIMEOUT)){
+            m_conThread->terminate();
+        }
+    }
     delete ui;
 }
 
@@ -90,6 +98,7 @@ void ClientTcpWindow::on_pushButton_linkServer_clicked()
     if(m_isConnected){
         emit sig_onConAbortCmd();
     }else{
+        if(!m_conThread->isRunning()) m_conThread->start();
         emit sig_onConConnectToHostCmd(
                     ui->lineEdit_serverAddr->text(),
                     (quint16)ui->lineEdit_serverPort->text().toInt());

@@ -19,11 +19,13 @@ signals:
 
     void sig_progressPercent(uint);
     void sig_gotBlockSN(quint32 sn);
+    void sig_finished();
+    void sig_aborted();
     
 public slots:
     /* called when server is ready with chooesed protocol */
     virtual void startFetch() = 0;
-    virtual void abortWorks() = 0;
+    virtual void abortWorks() = 0;  //abort asap
 protected:
     /* signal parent object to write out CMD */
     void sigWriteOutCmd(quint16, const QByteArray);

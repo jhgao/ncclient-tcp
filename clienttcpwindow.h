@@ -11,6 +11,8 @@ namespace Ui {
 class ClientTcpWindow;
 }
 
+static const int  WAIT_FOR_ABORT_TIMEOUT = 5000;
+
 class ClientTcpWindow : public QMainWindow
 {
     Q_OBJECT
