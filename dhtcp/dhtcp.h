@@ -37,7 +37,7 @@ private slots:
     void blockRcvFile();
 private:
     bool isReadyToFetch();
-    void writeOutCmd(eCMD, const QByteArray& = QByteArray());
+    void writeOutCmd(quint16, const QByteArray& = QByteArray());
     void processCMD(const Packet& p);
     QString psCmdDbg(QString cmd, QString arg = QString());
     void processData(const Packet& p);

@@ -70,8 +70,8 @@ void DHtcp::onIncomingDataConnection()
         i_tcpDataSkt = i_dataServer->nextPendingConnection();
 //        i_dataServer->close();
         qDebug() << "DHtcp::onIncomingDataConnection()";
-        emit sig_dataConnected();
         //TODO check incoming identity
+        emit sig_dataConnected();
         connect(i_tcpDataSkt, SIGNAL(readyRead()),
                 this, SLOT(onDataSktReadyRead()));
         connect(i_tcpDataSkt, SIGNAL(disconnected()),
@@ -135,7 +135,7 @@ bool DHtcp::isReadyToFetch()
     return false;
 }
 
-void DHtcp::writeOutCmd(eCMD cmd, const QByteArray &arg)
+void DHtcp::writeOutCmd(quint16 cmd, const QByteArray &arg)
 {
     if(!i_tcpDataSkt) return;
 
