@@ -15,7 +15,7 @@
 #define WAIT_RCV_BLOCK_TIMEOUT 5000    //15s
 #define DISPLAY_BLOCK_SIZE (100*1000)   //100K
 
-namespace DHtcp{
+namespace nProtocTCP{
 class DHtcp : public DataHandler
 {
     Q_OBJECT

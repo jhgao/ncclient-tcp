@@ -13,7 +13,7 @@
 #define FILE_WAIT_BYTES_WRITTEN 5000    //5S
 #define FLUSH_DELAY 1000 // 1S
 
-namespace DHtcp{
+namespace nProtocTCP{
 class DHtcpDecoder : public QObject
 {
     Q_OBJECT

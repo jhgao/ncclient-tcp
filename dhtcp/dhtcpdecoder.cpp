@@ -1,6 +1,6 @@
 #include "dhtcpdecoder.h"
 #include <QDebug>
-namespace DHtcp{
+namespace nProtocTCP{
 DHtcpDecoder::DHtcpDecoder(QObject *parent) :
     QObject(parent),i_savedBytes(0),i_cacheSize(0),
     i_flushDelayTimer(0)

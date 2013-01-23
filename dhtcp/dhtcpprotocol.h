@@ -6,7 +6,7 @@
  * server link back to client,
  * transfer data.
  */
-namespace DHtcp{
+namespace nProtocTCP{
 
 enum eCMD{
     CMD_START,

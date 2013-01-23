@@ -1,5 +1,5 @@
 #include "dhtcp.h"
-namespace DHtcp{
+namespace nProtocTCP{
 DHtcp::DHtcp(QObject *parent) :
     DataHandler(parent),i_tcpDataSkt(0),i_dataServer(0),
     i_cmd_counter(0),i_decoder(0),i_rcvFileSize(0),i_packetSize(0),
