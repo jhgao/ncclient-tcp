@@ -12,10 +12,12 @@
 #include "dhtcpprotocol.h"
 #include "dhtcpdecoder.h"
 
-#define WAIT_RCV_BLOCK_TIMEOUT 5000    //15s
-#define DISPLAY_BLOCK_SIZE (100*1000)   //100K
 
 namespace nProtocTCP{
+
+static const int WAIT_RCV_BLOCK_TIMEOUT = 5000 ;   //15s
+static const int DISPLAY_BLOCK_SIZE = (100*1000) ;  //100K
+
 class DHtcp : public DataHandler
 {
     Q_OBJECT
