@@ -13,14 +13,14 @@
 #define FILE_WAIT_BYTES_WRITTEN 5000    //5S
 #define FLUSH_DELAY 1000 // 1S
 
-namespace DHtcp{
+namespace nProtocTCP{
 class DHtcpDecoder : public QObject
 {
     Q_OBJECT
 public:
     explicit DHtcpDecoder(QObject *parent = 0);
     bool queueFileBlock(const QByteArray &);
-
+    QString getRcvCacheFileName()const;
 signals:
     void sig_savedAllBytes();
     void sig_blockCorruptOffset(quint64);

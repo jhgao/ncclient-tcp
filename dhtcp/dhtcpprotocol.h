@@ -6,14 +6,15 @@
  * server link back to client,
  * transfer data.
  */
-namespace DHtcp{
+namespace nProtocTCP{
 
 enum eCMD{
     CMD_START,
     CMD_STOP,
 
     //tcp file sendig
-    FILE_SENT
+    FILE_SENT_BLOCKING,  //request to start send file
+    FILE_SENT_BLOCKING_GOAHEAD   //ok to send file
 };
 
 }

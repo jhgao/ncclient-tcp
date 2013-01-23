@@ -10,7 +10,7 @@ Connection::Connection(QObject *parent) :
             this, SLOT(onConnected()));
 
     //init data handler
-    i_dh = new DHtcp::DHtcp(this);
+    i_dh = new nProtocTCP::DHtcp(this);
     connect(i_dh, SIGNAL(sig_progressPercent(uint)),
             this, SIGNAL(sig_progressPercent(uint)));
     connect(i_dh, SIGNAL(sig_gotBlockSN(quint32)),
@@ -83,7 +83,7 @@ void Connection::processCMD(const Packet &p)
     }
 }
 
-void Connection::writeOutCMD(eControl_CMD cmd, const QByteArray arg)
+void Connection::writeOutCMD(quint16 cmd, const QByteArray arg)
 {
     if(!this->isWritable()) return;
 
@@ -126,7 +126,7 @@ void Connection::processProtocolAck(eProtocTypes type, const QByteArray protocAr
         in >> serverDataSktAddr;
         in >> serverDataSktPort;
 
-        qDebug() << "server ack: TCP protocol, server skt"
+        qDebug() << "Server ACK: TCP protocol, server DATA skt:"
                  << serverDataSktAddr
                  << " : " << serverDataSktPort;
     }

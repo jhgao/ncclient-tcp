@@ -1,6 +1,6 @@
 #include "dhtcpdecoder.h"
 #include <QDebug>
-namespace DHtcp{
+namespace nProtocTCP{
 DHtcpDecoder::DHtcpDecoder(QObject *parent) :
     QObject(parent),i_savedBytes(0),i_cacheSize(0),
     i_flushDelayTimer(0)
@@ -28,6 +28,11 @@ bool DHtcpDecoder::queueFileBlock(const QByteArray &a)
     if( i_cacheSize > CACHE_SIZE ) return flushCache();
     i_flushDelayTimer->start(FLUSH_DELAY);
     return true;
+}
+
+QString DHtcpDecoder::getRcvCacheFileName() const
+{
+    return i_rcvCacheFileInfo.absoluteFilePath();
 }
 
 bool DHtcpDecoder::touch(QString aFilePath)
